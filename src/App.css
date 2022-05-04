@@ -1,9 +1,12 @@
 .App {
+  font-family: Verdana, Arial, Helvetica, sans-serif;
   display: grid;
   place-content: center;
   width: 100vw;
   height: 100vh;
 }
+
+/*--------------------Accordion------------------------*/
 
 .accordion {
   width: 40ch;
@@ -46,23 +49,7 @@ details[open] > p {
   clip: rect(0, 0, 0, 0);
   border: 0;
 }
-/*------------ TOODLIST---------------*/
-.todo-section {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-ul {
-  width: 100%;
-  padding: 0;
-}
 
-li {
-  width: 100%;
-  align-items: center;
-  display: flex;
-  gap: 1rem;
-}
-.delete-btn {
-  margin-left: auto;
+ul {
+  padding: 0;
 }

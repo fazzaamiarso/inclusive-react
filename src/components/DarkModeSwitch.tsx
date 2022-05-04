@@ -1,5 +1,5 @@
 import { ThemeMode } from '..';
-import './DarkModeSwitch.css';
+import style from './TodoList.module.css';
 
 type DarkModeSwitchProps = {
   mode: ThemeMode;
@@ -11,25 +11,10 @@ const DarkModeSwitch = ({ mode, setMode }: DarkModeSwitchProps) => {
       <button
         role='switch'
         id='dark-mode'
+        className={style.switch}
         aria-checked={mode === 'dark' ? 'true' : 'false'}
         onClick={() => setMode(mode === 'dark' ? 'light' : 'dark')}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '.5rem',
-        }}
       >
-        <span>
-          <svg
-            aria-hidden='true'
-            xmlns='http://www.w3.org/2000/svg'
-            height='1rem'
-            viewBox='0 0 20 20'
-            fill='currentColor'
-          >
-            <path d='M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z' />
-          </svg>{' '}
-        </span>
         <span>
           <svg
             aria-hidden='true'
@@ -44,6 +29,17 @@ const DarkModeSwitch = ({ mode, setMode }: DarkModeSwitchProps) => {
               clipRule='evenodd'
             />
           </svg>
+        </span>
+        <span>
+          <svg
+            aria-hidden='true'
+            xmlns='http://www.w3.org/2000/svg'
+            height='1rem'
+            viewBox='0 0 20 20'
+            fill='currentColor'
+          >
+            <path d='M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z' />
+          </svg>{' '}
         </span>
       </button>
       <label htmlFor='dark-mode' className='sr-only'>
