@@ -1,5 +1,7 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
+import { ThemeMode } from '.';
 import './App.css';
+import DarkModeSwitch from './components/DarkModeSwitch';
 
 const TODO_SEED = [
   { id: '1', name: 'Learn Remix', completed: false },
@@ -19,6 +21,8 @@ function App() {
   const filteredTodos = shouldShow
     ? todos
     : todos.filter((todo) => todo.completed === false);
+
+  const [mode, setMode] = useState<ThemeMode>('light');
 
   useEffect(() => {
     if (action === 'create' && todos.length) {
@@ -63,9 +67,20 @@ function App() {
         <h1 id='todo-heading' tabIndex={-1}>
           My Accessible Todo List
         </h1>
-        <div className='controls'>
-          <ToggleButton shouldShow={shouldShow} setShouldShow={setShouldShow} />
-        </div>
+        <ul
+          className='controls'
+          style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}
+        >
+          <li>
+            <ToggleButton
+              shouldShow={shouldShow}
+              setShouldShow={setShouldShow}
+            />
+          </li>
+          <li>
+            <DarkModeSwitch mode={mode} setMode={setMode} />
+          </li>
+        </ul>
         {filteredTodos.length ? (
           <ul>
             {filteredTodos.map((todo) => (
@@ -120,7 +135,13 @@ const ToggleButton = ({ shouldShow, setShouldShow }: ToggleProps) => {
     <button
       type='button'
       onClick={() => setShouldShow(!shouldShow)}
-      style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '.5rem',
+        width: 'max-content',
+      }}
+      aria-label={shouldShow ? 'Hide completed' : 'Show completed'}
     >
       {shouldShow ? (
         <svg
