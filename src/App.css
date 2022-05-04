@@ -1,0 +1,68 @@
+.App {
+  display: grid;
+  place-content: center;
+  width: 100vw;
+  height: 100vh;
+}
+
+.accordion {
+  width: 40ch;
+}
+
+details {
+  padding-block: 0.5rem;
+  border-radius: 5px;
+}
+
+details > summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: full;
+  list-style: none;
+
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  background-color: #638bee;
+  color: white;
+}
+
+.summary-widget {
+  font-weight: bold;
+}
+
+details[open] > p {
+  padding-top: 0.5rem;
+  padding-inline: 0.5rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+/*------------ TOODLIST---------------*/
+.todo-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+ul {
+  width: 100%;
+  padding: 0;
+}
+
+li {
+  width: 100%;
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+}
+.delete-btn {
+  margin-left: auto;
+}
