@@ -17,8 +17,8 @@ function App() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (action === 'create') {
-      inputRef.current?.focus(); //TODO: Check on screen reader
+    if (action === 'create' && todos.length) {
+      inputRef.current?.focus();
     }
 
     if (action === 'delete') {
@@ -32,6 +32,7 @@ function App() {
         if (firstTodoItem) firstTodoItem.focus();
       }
     }
+    setAction(null);
   }, [action, todos]);
 
   const createTodo = (e: FormEvent<HTMLFormElement>) => {
