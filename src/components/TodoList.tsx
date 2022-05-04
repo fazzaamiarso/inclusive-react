@@ -3,7 +3,6 @@ import { ThemeMode } from '..';
 import DarkModeSwitch from './DarkModeSwitch';
 import ToggleButton from './ToggleButton';
 import style from './TodoList.module.css';
-import { flushSync } from 'react-dom';
 
 const TODO_SEED = [
   { id: '1', name: 'Learn Remix', completed: false },
@@ -62,15 +61,15 @@ export default function TodoList() {
     setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
   };
 
-  const toggleTodo = (id: string, isCompleted: boolean) => {
-    const updatedTodoIdx = todos.findIndex((todo) => todo.id === id);
-    if (updatedTodoIdx === -1) throw Error('Should be Impossible!');
-
+  const toggleTodo = (id: string) => {
     setTodos((prevTodos) => {
-      const copiedTodos = [...prevTodos];
-      const updatedTodo = copiedTodos[updatedTodoIdx];
-      copiedTodos[updatedTodoIdx].completed = !updatedTodo.completed;
-      return copiedTodos;
+      const updatedTodos = prevTodos.map((todo) => {
+        if (todo.id === id) {
+          return { ...todo, completed: !todo.completed };
+        }
+        return todo;
+      });
+      return updatedTodos;
     });
   };
 
@@ -95,7 +94,9 @@ export default function TodoList() {
           {filteredTodos.map((todo) => (
             <TodoItem
               key={todo.id}
-              todo={todo}
+              id={todo.id}
+              name={todo.name}
+              completed={todo.completed}
               deleteTodo={deleteTodo}
               toggleTodo={toggleTodo}
             />
@@ -140,36 +141,40 @@ export default function TodoList() {
 }
 
 type TodoItemProps = {
-  todo: {
-    id: string;
-    name: string;
-    completed: boolean;
-  };
+  id: string;
+  name: string;
+  completed: boolean;
   deleteTodo: (id: string) => void;
-  toggleTodo: (id: string, completed: boolean) => void;
+  toggleTodo: (id: string) => void;
 };
-const TodoItem = ({ todo, deleteTodo, toggleTodo }: TodoItemProps) => {
+const TodoItem = ({
+  id,
+  name,
+  completed,
+  deleteTodo,
+  toggleTodo,
+}: TodoItemProps) => {
   const handleToggle = (e: ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    toggleTodo(todo.id, !todo.completed);
+    toggleTodo(id);
   };
+
   return (
     <li>
       <input
         type='checkbox'
-        id={todo.id}
-        checked={todo.completed}
+        id={id}
+        defaultChecked={completed}
         onChange={handleToggle}
       />
-      <label htmlFor={todo.id} style={{ width: '100%' }}>
-        {todo.name}
+      <label htmlFor={id} style={{ width: '100%' }}>
+        {name}
       </label>
       <button
         type='button'
-        onClick={() => deleteTodo(todo.id)}
+        onClick={() => deleteTodo(id)}
         className={style.delete}
       >
-        delete <span className='sr-only'>{todo.name}</span>
+        delete <span className='sr-only'>{name}</span>
       </button>
     </li>
   );
