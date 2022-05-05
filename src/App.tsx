@@ -2,14 +2,44 @@ import { FormEvent, useEffect, useRef, useState } from 'react';
 import './App.css';
 import TodoList from './components/TodoList';
 
-function App() {
+export default function App() {
   return (
-    <div className='App'>
-      <TodoList />
-    </div>
+    <main className='App'>
+      <ContentSlider />
+    </main>
   );
 }
-export default App;
+
+const ContentSlider = () => {
+  useEffect(() => {
+    //add touch class to indicate that it's a touch device
+    const addTouchClass = () => {
+      document.body.classList.add('touch');
+      document.removeEventListener('touchstart', addTouchClass);
+    };
+    document.addEventListener('touchstart', addTouchClass);
+  }, []);
+
+  return (
+    <section aria-labelledby='slider-gallery' tabIndex={0} className='gallery'>
+      <span id='slider-gallery' className='sr-only'>
+        Gallery
+      </span>
+      <ul className='list'>
+        <li className='item'></li>
+        <li className='item'></li>
+        <li className='item'></li>
+        <li className='item'></li>
+        <li className='item'></li>
+      </ul>
+      <div className='instruction'>
+        <span aria-hidden='true'>⬅</span>
+        <span>scroll for more</span>
+        <span aria-hidden='true'>➡</span>
+      </div>
+    </section>
+  );
+};
 
 const QuickAccordion = () => {
   const [open, setOpen] = useState(false);

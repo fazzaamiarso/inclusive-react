@@ -1,7 +1,5 @@
 .App {
   font-family: Verdana, Arial, Helvetica, sans-serif;
-  display: grid;
-  place-content: center;
   width: 100vw;
   height: 100vh;
 }
@@ -52,4 +50,35 @@ details[open] > p {
 
 ul {
   padding: 0;
+}
+
+/*------------------Content Slider ----------------------*/
+
+.list {
+  overflow-x: scroll;
+  display: flex;
+}
+
+.item {
+  flex-grow: 0;
+  flex-shrink: 0;
+  width: 20rem;
+  height: 20rem;
+  border: black solid 2px;
+  margin: 1rem;
+  display: inline-block;
+}
+
+.instruction {
+  width: 100%;
+  padding-block: 1rem;
+  display: none;
+}
+.gallery:hover > .instruction,
+.gallery:focus > .instruction,
+.touch .instruction {
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
