@@ -53,10 +53,33 @@ ul {
 }
 
 /*------------------Content Slider ----------------------*/
-.gallery {
+
+.gallery-container {
+  position: relative;
   width: max(350px, 50%);
   margin: 0 auto;
+  padding-block: 5rem;
+}
+
+.gallery-control button {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.gallery-control .prev {
+  left: 0;
+}
+.gallery-control .next {
+  right: 0;
+}
+
+.gallery {
   overflow-x: scroll;
+  scroll-snap-type: x mandatory;
 }
 
 .list {
@@ -71,6 +94,7 @@ ul {
   flex-basis: 100%;
   margin: 1rem;
   display: inline-block;
+  scroll-snap-align: center;
 }
 .item img {
   margin-inline: auto;
@@ -80,6 +104,7 @@ ul {
 }
 
 .instruction {
+  position: absolute;
   width: 100%;
   padding-block: 1rem;
   display: none;
