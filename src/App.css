@@ -53,20 +53,30 @@ ul {
 }
 
 /*------------------Content Slider ----------------------*/
+.gallery {
+  width: max(350px, 50%);
+  margin: 0 auto;
+  overflow-x: scroll;
+}
 
 .list {
-  overflow-x: scroll;
   display: flex;
+  width: 100%;
 }
 
 .item {
+  /* border: black solid 2px; */
   flex-grow: 0;
   flex-shrink: 0;
-  width: 20rem;
-  height: 20rem;
-  border: black solid 2px;
+  flex-basis: 100%;
   margin: 1rem;
   display: inline-block;
+}
+.item img {
+  margin-inline: auto;
+  width: 20rem;
+  height: 20rem;
+  object-fit: cover;
 }
 
 .instruction {
@@ -74,8 +84,9 @@ ul {
   padding-block: 1rem;
   display: none;
 }
-.gallery:hover > .instruction,
-.gallery:focus > .instruction,
+
+.gallery:hover + .instruction,
+.gallery:focus + .instruction,
 .touch .instruction {
   justify-content: center;
   display: flex;

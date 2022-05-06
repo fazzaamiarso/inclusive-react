@@ -10,6 +10,13 @@ export default function App() {
   );
 }
 
+const IMAGES = [
+  { src: '../assets/img1.jpg', alt: '' },
+  { src: '../assets/img2.jpg', alt: '' },
+  { src: '../assets/img3.jpg', alt: '' },
+  { src: '../assets/img4.jpg', alt: '' },
+  { src: '../assets/img5.jpg', alt: '' },
+];
 const ContentSlider = () => {
   useEffect(() => {
     //add touch class to indicate that it's a touch device
@@ -21,23 +28,70 @@ const ContentSlider = () => {
   }, []);
 
   return (
-    <section aria-labelledby='slider-gallery' tabIndex={0} className='gallery'>
-      <span id='slider-gallery' className='sr-only'>
-        Gallery
-      </span>
-      <ul className='list'>
-        <li className='item'></li>
-        <li className='item'></li>
-        <li className='item'></li>
-        <li className='item'></li>
-        <li className='item'></li>
-      </ul>
+    <>
+      <section
+        aria-labelledby='slider-gallery'
+        aria-describedby='instruction'
+        tabIndex={0}
+        className='gallery'
+        id='gallery'
+      >
+        <span id='slider-gallery' className='sr-only'>
+          Gallery
+        </span>
+        <ul className='list'>
+          {IMAGES.map((image) => {
+            return (
+              <SliderItem key={image.src} imgSrc={image.src} alt={image.alt} />
+            );
+          })}
+        </ul>
+      </section>
       <div className='instruction'>
         <span aria-hidden='true'>⬅</span>
-        <span>scroll for more</span>
+        <span id='instruction'>scroll for more</span>
         <span aria-hidden='true'>➡</span>
       </div>
-    </section>
+    </>
+  );
+};
+
+type SliderItemProps = {
+  imgSrc: string;
+  alt: string;
+};
+const SliderItem = ({ imgSrc, alt }: SliderItemProps) => {
+  const sliderRef = useRef<HTMLLIElement>(null);
+  const [image, setImage] = useState('');
+
+  useEffect(() => {
+    if (!sliderRef.current || !('IntersectionObserver' in window)) return;
+    const intersectionObserverOptions: { root: IntersectionObserver['root'] } =
+      {
+        root: document.getElementById('gallery'),
+      };
+    const intersectionCallback: IntersectionObserverCallback = (
+      slides,
+      observer
+    ) => {
+      slides.forEach((slide) => {
+        if (!slide.isIntersecting) return;
+        setImage(imgSrc);
+        observer.unobserve(slide.target);
+      });
+    };
+    const observer = new IntersectionObserver(
+      intersectionCallback,
+      intersectionObserverOptions
+    );
+    observer.observe(sliderRef.current);
+  }, []);
+  return (
+    <li className='item' ref={sliderRef}>
+      <figure>
+        <img src={image} alt={alt} />
+      </figure>
+    </li>
   );
 };
 
