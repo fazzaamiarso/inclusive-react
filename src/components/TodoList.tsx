@@ -129,11 +129,11 @@ export default function TodoList() {
           value={todoInput}
           onChange={(e) => setTodoInput(e.target.value)}
           ref={inputRef}
-          aria-labelledby='add-task'
+          id='add-task'
         />
-        <span id='add-task' className='sr-only'>
+        <label htmlFor='add-task' className='sr-only'>
           Add todo
-        </span>
+        </label>
         <button type='submit'>add todo</button>
       </form>
     </section>
