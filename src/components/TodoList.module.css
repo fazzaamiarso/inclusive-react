@@ -13,6 +13,8 @@
 }
 
 .section {
+  width: min(90%, 600px);
+  margin: 5rem auto;
   padding: 3rem;
   display: flex;
   flex-direction: column;
@@ -100,6 +102,7 @@
   align-items: center;
   gap: 1rem;
 
+  border: gray solid 1px;
   border-radius: 5px;
   padding: 0.25rem;
 }

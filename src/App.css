@@ -4,6 +4,10 @@
   height: 100vh;
 }
 
+*:focus-visible {
+  outline-color: blue;
+}
+
 /*--------------------Accordion------------------------*/
 
 .accordion {
