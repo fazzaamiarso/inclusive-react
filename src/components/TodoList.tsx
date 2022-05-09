@@ -55,7 +55,7 @@ export default function TodoList() {
     action: null,
   });
   const [todoInput, setTodoInput] = useState('');
-  const liveRegionRef = useRef<HTMLSpanElement>(null);
+  const newTodoRef = useRef('');
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [shouldShow, setShouldShow] = useState(true);
@@ -71,15 +71,15 @@ export default function TodoList() {
     }
 
     if (action === 'delete') {
+      let elementToFocus;
       if (todos.length === 0) {
-        const heading = document.getElementById(
+        elementToFocus = document.getElementById(
           'todo-heading'
         ) as HTMLHeadingElement;
-        heading.focus();
       } else {
-        const firstTodoItem = document.querySelector('ul input') as HTMLElement;
-        if (firstTodoItem) firstTodoItem.focus();
+        elementToFocus = document.querySelector('ul input') as HTMLElement;
       }
+      elementToFocus?.focus();
     }
   }, [action, todos]);
 
@@ -92,8 +92,7 @@ export default function TodoList() {
     };
     dispatch({ type: 'create', payload: newTodo });
     setTodoInput('');
-    if (liveRegionRef.current)
-      liveRegionRef.current.textContent = `added ${todoInput}`;
+    newTodoRef.current = todoInput;
   };
 
   const deleteTodo = (id: string) => {
@@ -140,19 +139,15 @@ export default function TodoList() {
           <p className={style.emptyTodo}>
             <span style={{ fontWeight: 'bold', fontSize: '1.5rem' }}>
               No todo yet
-            </span>{' '}
+            </span>
             <span>add your first todo ⬇</span>
           </p>
         </div>
       )}
       <form onSubmit={createTodo} className={style.form}>
-        <span
-          className='sr-only'
-          role='status'
-          aria-live='polite'
-          id='add-status'
-          ref={liveRegionRef}
-        />
+        <span className='sr-only' role='status' aria-live='polite'>
+          Added {newTodoRef.current}
+        </span>
         <input
           type='text'
           placeholder='e.g. watch family feud'
@@ -185,17 +180,13 @@ const TodoItem = ({
   deleteTodo,
   toggleTodo,
 }: TodoItemProps) => {
-  const handleToggle = (e: ChangeEvent<HTMLInputElement>) => {
-    toggleTodo(id);
-  };
-
   return (
     <li>
       <input
         type='checkbox'
         id={id}
         defaultChecked={completed}
-        onChange={handleToggle}
+        onChange={() => toggleTodo(id)}
       />
       <label htmlFor={id} style={{ width: '100%' }}>
         {name}
