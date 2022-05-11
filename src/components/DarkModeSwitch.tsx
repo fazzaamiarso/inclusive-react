@@ -1,11 +1,12 @@
+import { useState, useEffect } from 'react';
 import { ThemeMode } from '..';
 import style from './TodoList.module.css';
 
 type DarkModeSwitchProps = {
   mode: ThemeMode;
-  setMode: (mode: ThemeMode) => void;
+  toggleMode: () => void;
 };
-const DarkModeSwitch = ({ mode, setMode }: DarkModeSwitchProps) => {
+const DarkModeSwitch = ({ mode, toggleMode }: DarkModeSwitchProps) => {
   return (
     <>
       <button
@@ -13,7 +14,7 @@ const DarkModeSwitch = ({ mode, setMode }: DarkModeSwitchProps) => {
         id='dark-mode'
         className={style.switch}
         aria-checked={mode === 'dark' ? 'true' : 'false'}
-        onClick={() => setMode(mode === 'dark' ? 'light' : 'dark')}
+        onClick={() => toggleMode()}
       >
         <span>
           <SunIcon />
@@ -30,6 +31,33 @@ const DarkModeSwitch = ({ mode, setMode }: DarkModeSwitchProps) => {
 };
 
 export default DarkModeSwitch;
+
+export const useDarkMode = () => {
+  const [mode, setMode] = useState<ThemeMode>('light');
+
+  const setTheme = (mode: ThemeMode) => {
+    localStorage.setItem('theme', mode);
+    setMode(mode);
+  };
+
+  const toggleMode = () => {
+    setTheme(mode === 'dark' ? 'light' : 'dark');
+  };
+
+  useEffect(() => {
+    const localTheme = localStorage.getItem('theme');
+
+    if (
+      window.matchMedia &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches
+    ) {
+      return localTheme ? setTheme(localTheme as ThemeMode) : setTheme('dark');
+    }
+    setTheme('light');
+  }, []);
+
+  return [mode, toggleMode] as const;
+};
 
 const SunIcon = () => {
   return (

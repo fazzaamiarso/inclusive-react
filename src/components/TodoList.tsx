@@ -3,12 +3,11 @@ import {
   useRef,
   useEffect,
   FormEvent,
-  ChangeEvent,
   Reducer,
   useReducer,
 } from 'react';
 import { ThemeMode } from '..';
-import DarkModeSwitch from './DarkModeSwitch';
+import DarkModeSwitch, { useDarkMode } from './DarkModeSwitch';
 import ToggleButton from './ToggleButton';
 import style from './TodoList.module.css';
 
@@ -63,7 +62,7 @@ export default function TodoList() {
     ? todos
     : todos.filter((todo) => todo.completed === false);
 
-  const [mode, setMode] = useState<ThemeMode>('light');
+  const [mode, toggleMode] = useDarkMode();
 
   useEffect(() => {
     if (action === 'create' && todos.length) {
@@ -116,7 +115,7 @@ export default function TodoList() {
           <ToggleButton shouldShow={shouldShow} setShouldShow={setShouldShow} />
         </li>
         <li>
-          <DarkModeSwitch mode={mode} setMode={setMode} />
+          <DarkModeSwitch mode={mode} toggleMode={toggleMode} />
         </li>
       </ul>
       {filteredTodos.length ? (
