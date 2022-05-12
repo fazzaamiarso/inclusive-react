@@ -1,7 +1,9 @@
+import { lazy, Suspense } from 'react';
 import { Link, Outlet, Route, Routes } from 'react-router-dom';
 import './App.css';
-import ContentSlider from './components/Slider/ContentSlider';
 import TodoList from './components/TodoList/TodoList';
+
+const ContentSlider = lazy(() => import('./components/Slider/ContentSlider'));
 
 export default function App() {
   return (
@@ -22,7 +24,14 @@ export default function App() {
         <Route path='/' element={<PageLayout />}>
           <Route index element={<TodoList />} />
           <Route path='todo-list' element={<TodoList />} />
-          <Route path='slider-gallery' element={<ContentSlider />} />
+          <Route
+            path='slider-gallery'
+            element={
+              <Suspense fallback={<>Loading....</>}>
+                <ContentSlider />
+              </Suspense>
+            }
+          />
         </Route>
       </Routes>
     </>
