@@ -28,7 +28,7 @@ export default function App() {
             path='slider-gallery'
             element={
               <Suspense fallback={<>Loading....</>}>
-                <ContentSlider />
+                <h1>In Progress...</h1>
               </Suspense>
             }
           />
