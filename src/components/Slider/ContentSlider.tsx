@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-
+import style from './ContentSlider.module.css';
 const IMAGES = [
   { src: '../assets/img1.jpg', alt: '3 Golden coins' },
   { src: '../assets/img2.jpg', alt: 'A person holding camera' },
@@ -36,13 +36,14 @@ const ContentSlider = () => {
   };
 
   return (
-    <div className='gallery-container'>
-      <ul className='gallery-control' aria-label='gallery controls'>
+    <div className={style['gallery-container']}>
+      <h1>(Slider In progress...)</h1>
+      <ul className={style['gallery-control']} aria-label='gallery controls'>
         <li>
           <button
             type='button'
             aria-label='previous image'
-            className='prev'
+            className={style.prev}
             onClick={handlePrev}
           >
             <svg
@@ -65,7 +66,7 @@ const ContentSlider = () => {
           <button
             type='button'
             aria-label='next image'
-            className='next'
+            className={style.next}
             onClick={handleNext}
           >
             <svg
@@ -89,14 +90,14 @@ const ContentSlider = () => {
         aria-labelledby='slider-gallery'
         aria-describedby='instruction'
         tabIndex={0}
-        className='gallery'
+        className={style.gallery}
         id='gallery'
         ref={galleryRef}
       >
         <span id='slider-gallery' className='sr-only'>
           Gallery
         </span>
-        <ul className='list'>
+        <ul className={style.list}>
           {IMAGES.map((image, idx) => {
             return (
               <SliderItem
@@ -110,7 +111,7 @@ const ContentSlider = () => {
           })}
         </ul>
       </section>
-      <div className='instruction'>
+      <div className={style.instruction}>
         <span aria-hidden='true'>⬅</span>
         <span id='instruction'>scroll for more</span>
         <span aria-hidden='true'>➡</span>
@@ -164,7 +165,7 @@ const SliderItem = ({
     }
   }, []);
   return (
-    <li className='item' ref={sliderRef}>
+    <li className={style.item} ref={sliderRef}>
       <figure>
         <img src={image} alt={alt} />
       </figure>
