@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ThemeMode } from '..';
+import { ThemeMode } from '../..';
 import style from './TodoList.module.css';
 
 type DarkModeSwitchProps = {

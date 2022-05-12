@@ -6,7 +6,6 @@ import {
   Reducer,
   useReducer,
 } from 'react';
-import { ThemeMode } from '..';
 import DarkModeSwitch, { useDarkMode } from './DarkModeSwitch';
 import ToggleButton from './ToggleButton';
 import style from './TodoList.module.css';
