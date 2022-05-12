@@ -1,6 +1,12 @@
-import { useState, useRef, useEffect, FormEvent, ChangeEvent } from 'react';
-import { ThemeMode } from '..';
-import DarkModeSwitch from './DarkModeSwitch';
+import {
+  useState,
+  useRef,
+  useEffect,
+  FormEvent,
+  Reducer,
+  useReducer,
+} from 'react';
+import DarkModeSwitch, { useDarkMode } from './DarkModeSwitch';
 import ToggleButton from './ToggleButton';
 import style from './TodoList.module.css';
 
@@ -9,12 +15,45 @@ const TODO_SEED = [
   { id: '2', name: 'Get groceries', completed: true },
 ];
 
-type TaskAction = 'create' | 'delete';
+type TodoItem = { id: string; name: string; completed: boolean };
+type TaskActions =
+  | { type: 'create'; payload: TodoItem }
+  | { type: 'delete' | 'toggle'; payload: TodoItem['id'] };
+
+type TaskReducerState = {
+  todos: TodoItem[];
+  action: TaskActions['type'] | null;
+};
+
+const todoReducer: Reducer<TaskReducerState, TaskActions> = (state, action) => {
+  switch (action.type) {
+    case 'create':
+      return { todos: [...state.todos, action.payload], action: 'create' };
+    case 'delete':
+      return {
+        todos: state.todos.filter((todo) => todo.id !== action.payload),
+        action: 'delete',
+      };
+    case 'toggle':
+      const updatedTodos = state.todos.map((todo) => {
+        if (todo.id === action.payload) {
+          return { ...todo, completed: !todo.completed };
+        }
+        return todo;
+      });
+      return { todos: updatedTodos, action: 'toggle' };
+    default:
+      throw Error(`Unhandled action`);
+  }
+};
+
 export default function TodoList() {
-  const [todos, setTodos] = useState(TODO_SEED);
+  const [{ todos, action }, dispatch] = useReducer(todoReducer, {
+    todos: TODO_SEED,
+    action: null,
+  });
   const [todoInput, setTodoInput] = useState('');
-  const [action, setAction] = useState<TaskAction | null>(null);
-  const liveRegionRef = useRef<HTMLSpanElement>(null);
+  const liveRegionRef = useRef('');
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [shouldShow, setShouldShow] = useState(true);
@@ -22,7 +61,7 @@ export default function TodoList() {
     ? todos
     : todos.filter((todo) => todo.completed === false);
 
-  const [mode, setMode] = useState<ThemeMode>('light');
+  const [mode, toggleMode] = useDarkMode();
 
   useEffect(() => {
     if (action === 'create' && todos.length) {
@@ -30,17 +69,16 @@ export default function TodoList() {
     }
 
     if (action === 'delete') {
+      let elementToFocus;
       if (todos.length === 0) {
-        const heading = document.getElementById(
+        elementToFocus = document.getElementById(
           'todo-heading'
         ) as HTMLHeadingElement;
-        heading.focus();
       } else {
-        const firstTodoItem = document.querySelector('ul input') as HTMLElement;
-        if (firstTodoItem) firstTodoItem.focus();
+        elementToFocus = document.querySelector('ul input') as HTMLElement;
       }
+      elementToFocus?.focus();
     }
-    setAction(null);
   }, [action, todos]);
 
   const createTodo = (e: FormEvent<HTMLFormElement>) => {
@@ -50,27 +88,18 @@ export default function TodoList() {
       name: todoInput,
       completed: false,
     };
-    setTodos((prevTodos) => [...prevTodos, newTodo]);
+    dispatch({ type: 'create', payload: newTodo });
     setTodoInput('');
-    if (liveRegionRef.current)
-      liveRegionRef.current.textContent = `added ${todoInput}`;
+    liveRegionRef.current = `Added ${todoInput}`;
   };
 
-  const deleteTodo = (id: string) => {
-    setAction('delete');
-    setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+  const deleteTodo = (id: string, todoName: string) => {
+    dispatch({ type: 'delete', payload: id });
+    liveRegionRef.current = `Deleted ${todoName}`;
   };
 
   const toggleTodo = (id: string) => {
-    setTodos((prevTodos) => {
-      const updatedTodos = prevTodos.map((todo) => {
-        if (todo.id === id) {
-          return { ...todo, completed: !todo.completed };
-        }
-        return todo;
-      });
-      return updatedTodos;
-    });
+    dispatch({ type: 'toggle', payload: id });
   };
 
   return (
@@ -86,7 +115,7 @@ export default function TodoList() {
           <ToggleButton shouldShow={shouldShow} setShouldShow={setShouldShow} />
         </li>
         <li>
-          <DarkModeSwitch mode={mode} setMode={setMode} />
+          <DarkModeSwitch mode={mode} toggleMode={toggleMode} />
         </li>
       </ul>
       {filteredTodos.length ? (
@@ -109,19 +138,15 @@ export default function TodoList() {
           <p className={style.emptyTodo}>
             <span style={{ fontWeight: 'bold', fontSize: '1.5rem' }}>
               No todo yet
-            </span>{' '}
+            </span>
             <span>add your first todo ⬇</span>
           </p>
         </div>
       )}
+      <span className='sr-only' role='status' aria-live='polite'>
+        {liveRegionRef.current}
+      </span>
       <form onSubmit={createTodo} className={style.form}>
-        <span
-          className='sr-only'
-          role='status'
-          aria-live='polite'
-          id='add-status'
-          ref={liveRegionRef}
-        />
         <input
           type='text'
           placeholder='e.g. watch family feud'
@@ -144,7 +169,7 @@ type TodoItemProps = {
   id: string;
   name: string;
   completed: boolean;
-  deleteTodo: (id: string) => void;
+  deleteTodo: (id: string, todoName: string) => void;
   toggleTodo: (id: string) => void;
 };
 const TodoItem = ({
@@ -154,27 +179,37 @@ const TodoItem = ({
   deleteTodo,
   toggleTodo,
 }: TodoItemProps) => {
-  const handleToggle = (e: ChangeEvent<HTMLInputElement>) => {
-    toggleTodo(id);
-  };
-
   return (
     <li>
       <input
         type='checkbox'
         id={id}
         defaultChecked={completed}
-        onChange={handleToggle}
+        onChange={() => toggleTodo(id)}
       />
       <label htmlFor={id} style={{ width: '100%' }}>
         {name}
       </label>
       <button
         type='button'
-        onClick={() => deleteTodo(id)}
+        onClick={() => deleteTodo(id, name)}
         className={style.delete}
       >
-        delete <span className='sr-only'>{name}</span>
+        <span className='sr-only'>delete {name}</span>
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          height='1.5rem'
+          width='1.5rem'
+          viewBox='0 0 20 20'
+          fill='currentColor'
+          aria-hidden='true'
+        >
+          <path
+            fillRule='evenodd'
+            d='M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z'
+            clipRule='evenodd'
+          />
+        </svg>
       </button>
     </li>
   );
