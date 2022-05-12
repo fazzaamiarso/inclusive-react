@@ -54,7 +54,7 @@ export default function TodoList() {
     action: null,
   });
   const [todoInput, setTodoInput] = useState('');
-  const newTodoRef = useRef('');
+  const liveRegionRef = useRef('');
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [shouldShow, setShouldShow] = useState(true);
@@ -91,11 +91,12 @@ export default function TodoList() {
     };
     dispatch({ type: 'create', payload: newTodo });
     setTodoInput('');
-    newTodoRef.current = todoInput;
+    liveRegionRef.current = `Added ${todoInput}`;
   };
 
-  const deleteTodo = (id: string) => {
+  const deleteTodo = (id: string, todoName: string) => {
     dispatch({ type: 'delete', payload: id });
+    liveRegionRef.current = `Deleted ${todoName}`;
   };
 
   const toggleTodo = (id: string) => {
@@ -143,10 +144,10 @@ export default function TodoList() {
           </p>
         </div>
       )}
+      <span className='sr-only' role='status' aria-live='polite'>
+        {liveRegionRef.current}
+      </span>
       <form onSubmit={createTodo} className={style.form}>
-        <span className='sr-only' role='status' aria-live='polite'>
-          Added {newTodoRef.current}
-        </span>
         <input
           type='text'
           placeholder='e.g. watch family feud'
@@ -169,7 +170,7 @@ type TodoItemProps = {
   id: string;
   name: string;
   completed: boolean;
-  deleteTodo: (id: string) => void;
+  deleteTodo: (id: string, todoName: string) => void;
   toggleTodo: (id: string) => void;
 };
 const TodoItem = ({
@@ -192,7 +193,7 @@ const TodoItem = ({
       </label>
       <button
         type='button'
-        onClick={() => deleteTodo(id)}
+        onClick={() => deleteTodo(id, name)}
         className={style.delete}
       >
         <span className='sr-only'>delete {name}</span>
